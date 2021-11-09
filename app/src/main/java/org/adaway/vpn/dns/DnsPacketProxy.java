@@ -12,7 +12,7 @@
  * Contributions shall also be provided under any later versions of the
  * GPL.
  */
-package org.adaway.vpn;
+package org.adaway.vpn.dns;
 
 import android.content.Context;
 import android.util.Log;
@@ -21,6 +21,7 @@ import org.adaway.AdAwayApplication;
 import org.adaway.db.entity.HostEntry;
 import org.adaway.db.entity.ListType;
 import org.adaway.model.vpn.VpnModel;
+import org.adaway.vpn.VpnNetworkException;
 import org.pcap4j.packet.IpPacket;
 import org.pcap4j.packet.IpSelector;
 import org.pcap4j.packet.IpV4Packet;
@@ -50,11 +51,9 @@ import java.net.UnknownHostException;
 import java.util.Locale;
 
 /**
- * Creates and parses packets, and sends packets to a remote socket or the device using
- * {@link VpnWorker}.
+ * Creates and parses packets, and sends packets to a remote socket or the device using VpnWorker.
  */
 public class DnsPacketProxy {
-
     private static final String TAG = "DnsPacketProxy";
     // Choose a value that is smaller than the time needed to unblock a host.
     private static final int NEGATIVE_CACHE_TTL_SECONDS = 5;
@@ -76,7 +75,7 @@ public class DnsPacketProxy {
     private final DnsServerMapper dnsServerMapper;
     private VpnModel vpnModel;
 
-    DnsPacketProxy(EventLoop eventLoop, DnsServerMapper dnsServerMapper) {
+    public DnsPacketProxy(EventLoop eventLoop, DnsServerMapper dnsServerMapper) {
         this.eventLoop = eventLoop;
         this.dnsServerMapper = dnsServerMapper;
     }
@@ -86,7 +85,7 @@ public class DnsPacketProxy {
      *
      * @param context The context we are operating in (for the database).
      */
-    void initialize(Context context) {
+    public void initialize(Context context) {
         this.vpnModel = (VpnModel) ((AdAwayApplication) context.getApplicationContext()).getAdBlockModel();
     }
 
@@ -96,7 +95,7 @@ public class DnsPacketProxy {
      * @param requestPacket   The original request packet
      * @param responsePayload The payload of the response
      */
-    void handleDnsResponse(IpPacket requestPacket, byte[] responsePayload) {
+    public void handleDnsResponse(IpPacket requestPacket, byte[] responsePayload) {
         UdpPacket udpOutPacket = (UdpPacket) requestPacket.getPayload();
         UdpPacket.Builder payLoadBuilder = new UdpPacket.Builder(udpOutPacket)
                 .srcPort(udpOutPacket.getHeader().getDstPort())
@@ -135,9 +134,9 @@ public class DnsPacketProxy {
      * Handles a DNS request, by either blocking it or forwarding it to the remote location.
      *
      * @param packetData The packet data to read
-     * @throws VpnWorker.VpnNetworkException If some network error occurred
+     * @throws VpnNetworkException If some network error occurred
      */
-    void handleDnsRequest(byte[] packetData) throws VpnWorker.VpnNetworkException {
+    public void handleDnsRequest(byte[] packetData) throws VpnNetworkException {
         IpPacket ipPacket;
         try {
             ipPacket = (IpPacket) IpSelector.newPacket(packetData, 0, packetData.length);
@@ -246,9 +245,9 @@ public class DnsPacketProxy {
     }
 
     /**
-     * Interface abstracting away {@link VpnWorker}.
+     * Interface abstracting away VpnWorker.
      */
-    interface EventLoop {
+    public interface EventLoop {
         /**
          * Called to send a packet to a remote location
          *
@@ -257,7 +256,7 @@ public class DnsPacketProxy {
          *                      call {@link #handleDnsResponse(IpPacket, byte[])} for the data
          *                      of the response, with this packet as the first argument.
          */
-        void forwardPacket(DatagramPacket packet, IpPacket requestPacket) throws VpnWorker.VpnNetworkException;
+        void forwardPacket(DatagramPacket packet, IpPacket requestPacket) throws VpnNetworkException;
 
         /**
          * Write an IP packet to the local TUN device

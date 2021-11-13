@@ -20,6 +20,11 @@
 
 package org.adaway.broadcast;
 
+import static android.content.Intent.ACTION_BOOT_COMPLETED;
+import static org.adaway.model.adblocking.AdBlockMethod.ROOT;
+import static org.adaway.model.adblocking.AdBlockMethod.VPN;
+import static org.adaway.util.Constants.TAG;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -28,12 +33,7 @@ import org.adaway.helper.PreferenceHelper;
 import org.adaway.model.adblocking.AdBlockMethod;
 import org.adaway.util.Log;
 import org.adaway.util.WebServerUtils;
-import org.adaway.vpn.VpnService;
-
-import static android.content.Intent.ACTION_BOOT_COMPLETED;
-import static org.adaway.model.adblocking.AdBlockMethod.ROOT;
-import static org.adaway.model.adblocking.AdBlockMethod.VPN;
-import static org.adaway.util.Constants.TAG;
+import org.adaway.vpn.VpnServiceControls;
 
 /**
  * This broadcast receiver is executed after boot.
@@ -57,7 +57,7 @@ public class BootReceiver extends BroadcastReceiver {
                     context.startActivity(prepareIntent);
                 }
                 // Start VPN service if enabled in preferences
-                VpnService.start(context);
+                VpnServiceControls.start(context);
             }
         }
     }

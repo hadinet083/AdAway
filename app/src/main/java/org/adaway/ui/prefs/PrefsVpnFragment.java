@@ -1,5 +1,7 @@
 package org.adaway.ui.prefs;
 
+import static org.adaway.util.Constants.PREFS_NAME;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,9 +15,7 @@ import androidx.preference.PreferenceFragmentCompat;
 
 import org.adaway.R;
 import org.adaway.ui.prefs.exclusion.PrefsVpnExcludedAppsActivity;
-import org.adaway.vpn.VpnService;
-
-import static org.adaway.util.Constants.PREFS_NAME;
+import org.adaway.vpn.VpnServiceControls;
 
 /**
  * This fragment is the preferences fragment for VPN ad blocker.
@@ -72,9 +72,9 @@ public class PrefsVpnFragment extends PreferenceFragmentCompat {
 
     private void restartVpn() {
         Context context = requireContext();
-        if (VpnService.isStarted(context)) {
-            VpnService.stop(context);
-            VpnService.start(context);
+        if (VpnServiceControls.isStarted(context)) {
+            VpnServiceControls.stop(context);
+            VpnServiceControls.start(context);
         }
     }
 }

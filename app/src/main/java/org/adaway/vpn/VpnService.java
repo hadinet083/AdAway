@@ -60,6 +60,17 @@ import org.adaway.ui.home.HomeActivity;
 
 import java.lang.ref.WeakReference;
 
+/**
+ * This class is the VPN platform service implementation.<br>
+ *
+ * it is in charge of:
+ * <ul>
+ * <li>Accepting service commands,</li>
+ * <li>Starting / stopping the {@link VpnWorker} thread,</li>
+ * <li>Publishing notifications and intent about the VPN state,</li>
+ * <li>Reacting to network connectivity changes.</li>
+ * </ul>
+ */
 public class VpnService extends android.net.VpnService {
     public static final int REQUEST_CODE_START = 43;
     public static final int REQUEST_CODE_PAUSE = 42;
@@ -156,6 +167,8 @@ public class VpnService extends android.net.VpnService {
                 notificationManager.notify(VPN_RESUME_SERVICE_NOTIFICATION_ID, notification);
         }
 
+        // TODO BUG - Nobody is listening to this intent
+        // TODO BUG - VpnModel can lister to it to update the MainActivity according its current state
         Intent intent = new Intent(VPN_UPDATE_STATUS_INTENT);
         intent.putExtra(VPN_UPDATE_STATUS_EXTRA, status);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);

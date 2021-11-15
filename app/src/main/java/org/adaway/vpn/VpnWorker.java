@@ -133,6 +133,7 @@ class VpnWorker implements DnsPacketProxy.EventLoop {
 
     /**
      * Start the VPN worker.
+     * Kill the current worker and restart it if already running.
      */
     public void start() {
         Log.i(TAG, "Starting VPN thread…");
